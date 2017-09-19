@@ -1,10 +1,19 @@
 #include <omp.h>
 #include <stdio.h>
 
-int main(void) {
-	omp_get_num_threads(10)
+int main() {
+	int nthreads, id;
 	#pragma omp parallel
-	printf("hello from thread %d n hread %d\n", omp_get_thread_num(), omp_get_num_threads());
-
-
+	{
+		nthreads = omp_get_num_threads();
+		id = omp_get_thread_num();
+		printf("hello from thread %d, nthreads %d\n", omp_get_thread_num(), omp_get_num_threads());
+		printf("hello form id = %d\n", id);
+		#pragma omp barrier
+		if (id == 0) {
+			nthreads = omp_get_num_threads();
+			printf("There are %d thread, id = %d\n", nthreads, id);
+		}
+	}
+	return 0;
 }

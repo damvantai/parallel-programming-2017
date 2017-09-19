@@ -111,4 +111,4 @@ int main() {
 // }
 
 
-bai tap 2 nhan ma tran chay song song
+// bai tap 2 nhan ma tran chay song song
