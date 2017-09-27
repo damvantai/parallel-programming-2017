@@ -12,7 +12,7 @@ int main() {
 		printf("Hello from thread %d, x = %d", id, x);
 		// printf("Hello from thread %d, x = %d", omp_get_thread_num(), 10 * omp_get_thread_num());
 		printf("\n");
-		#pragma omp barrier
+		// #pragma omp barrier
 		if (id == 0) {
 			nthreads = omp_get_num_threads();
 			printf("There are %d thread\n", nthreads);

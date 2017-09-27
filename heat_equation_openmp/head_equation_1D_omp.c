@@ -2,22 +2,22 @@
 #include <omp.h>
 
 #define M 20
-#define Time 20
+#define Time 3
 #define dt 0.01
 #define dx 0.1
 #define D 0.1
 #define NT 4
 
-// void daohambac2(float *T, float *dT) {
-// 	int i;
-// 	float c,l,r;
-// 	for (i = 0; i <= M - 1; i++) {
-// 		c = *(T + i);
-// 		l = (i == 0) ? 100. : *(T + i - 1);
-// 		r = (i == M - 1) ? 25. : *(T + i + 1);
-// 		*(dT + i) = D * (l - 2 * c + r) / (dx * dx);
-// 	}
-// }
+void daohambac2(float *T, float *dT) {
+	int i;
+	float c,l,r;
+	for (i = 0; i <= M-1; i++) {
+		c = *(T + i);
+		l = (i == 0) ? 100. : *(T + i - 1);
+		r = (i == M - 1) ? 25. : *(T + i + 1);
+		*(dT + i) = D * (l - 2 * c + r) / (dx * dx);
+	}
+}
 
 int main() {
 	FILE *f;
@@ -45,24 +45,16 @@ int main() {
 
 	for (t = 0; t < Ntime; t++) {
 		fprintf(f, "%0.2f ", t);
-		// daohambac2(&T, &dT);
-		int i;
-		float c,l,r;
-		for (i = 0; i <= M-1; i++) {
-			c = *(T + i);
-			l = (i == 0) ? 100. : *(T + i - 1);
-			r = (i == M - 1) ? 25. : *(T + i + 1);
-			*(dT + i) = D * (l - 2 * c + r) / (dx * dx);
-		}
+		daohambac2(&T, &dT);
 
 		// thiet lap NT threads
+		omp_set_num_threads(NT);
 
 		// run parallel in tinh Ti
 		// NT threads cho 20 T, 
 		// divide NT cho 4 T
 		#pragma omp parallel private(id, i, start, stop, Mc, t)
 		{
-			omp_set_num_threads(NT);
 			id = omp_get_thread_num();
 			Mc = M / NT; // Mc = 20 / 5 = 4
 			start = id * Mc; // start = 0, 4, 8, 12, 16
@@ -72,6 +64,7 @@ int main() {
 				*(T + i) = *(T + i) + *(dT + i) * dt;
 				// fprintf(f, "%0.4f ", *(T + i));
 			}
+			#pragma omp barrier
 		}
 
 		for (i = 0; i < M; i++) {
@@ -81,13 +74,6 @@ int main() {
 		t = t + dt;
 		
 	}
-	printf("\n");
-
-	for (i = 0; i < M; i++) {
-		printf("%0.4f\t", *(dT + i));
-		if ((i + 1) % 5 == 0) printf("\n");
-	}
-
 	printf("\n");
 
 	for (i = 0; i < M; i++) {
