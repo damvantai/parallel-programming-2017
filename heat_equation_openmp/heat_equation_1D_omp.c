@@ -8,16 +8,16 @@
 #define D 0.1
 #define NT 4
 
-void daohambac2(float *T, float *dT) {
-	int i;
-	float c,l,r;
-	for (i = 0; i <= M - 1; i++) {
-		c = *(T + i);
-		l = (i == 0) ? 100. : *(T + i - 1);
-		r = (i == M - 1) ? 25. : *(T + i + 1);
-		*(dT + i) = D * (l - 2 * c + r) / (dx * dx);
-	}
-}
+// void daohambac2(float *T, float *dT) {
+// 	int i;
+// 	float c,l,r;
+// 	for (i = 0; i <= M - 1; i++) {
+// 		c = *(T + i);
+// 		l = (i == 0) ? 100. : *(T + i - 1);
+// 		r = (i == M - 1) ? 25. : *(T + i + 1);
+// 		*(dT + i) = D * (l - 2 * c + r) / (dx * dx);
+// 	}
+// }
 
 int main() {
 	FILE *f;

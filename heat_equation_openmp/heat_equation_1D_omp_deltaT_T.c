@@ -74,8 +74,8 @@ int main() {
 				*(T + i) = *(T + i) + *(dT + i) * dt;
 				// fprintf(f, "%0.4f ", *(T + i));
 			}
-			#pragma omp barrier
-
+			// bo hay ko deu duoc
+			#pragma omp barrier 
 		}
 		for (i = 0; i < M; i++) {
 			fprintf(f, "%0.4f ", *(T + i));
