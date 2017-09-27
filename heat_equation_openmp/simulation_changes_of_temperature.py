@@ -28,7 +28,7 @@ data = []
 # In[33]:
 
 
-with open("data.txt", "r") as file:
+with open("data_omp_2.txt", "r") as file:
     for line in file.readlines():
         data.append(line.split(" "))
 file.close()
@@ -118,6 +118,6 @@ def update(i):
     plt.plot(x, temperture[i], 'r')
 
 anim = FuncAnimation(fig, update, interval=200)
-anim.save("heat_equation.mp4")
+anim.save("heat_equation_omp2.mp4")
 plt.show()
 
