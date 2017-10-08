@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define M 20
+#define  20
 #define M_PI 3.14159265358979323846
 #define Time 20
 #define C 0.2
