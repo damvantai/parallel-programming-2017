@@ -30,7 +30,7 @@ double f(double x);
 
 int main() {
 	int my_rank, comm_sz, n = 1024, local_n;
-	double a = 4.0, b = 4.001, h, local_a, local_b;
+	double a = 1, b = 2, h, local_a, local_b;
 	double local_int, total_int;
 	int source;
 

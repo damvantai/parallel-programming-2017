@@ -95,7 +95,8 @@ int main(int argc, char *argv[]) {
 		printf("Done\n");
 	}
 /**************************worker task****************************/
-	if (taskid > MASTER) {
+	// if (taskid > MASTER) {
+	else {
 		mtype = FROM_MASTER;
 		MPI_Recv(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
 		MPI_Recv(&a, NCA, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
