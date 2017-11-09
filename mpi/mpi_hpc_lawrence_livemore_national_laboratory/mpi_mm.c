@@ -62,8 +62,8 @@ int main(int argc, char *argv[]) {
 			printf("Sending %d rows to task %d offset=%d\n", rows, dest, offset);
 			MPI_Send(&offset, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
 			MPI_Send(&rows, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
-			MPI_Send(&a[offset][0], rows*NCA, MPI_DOUBLE, dest, MPI_COMM_WORLD);
-			MPI_Send(&b, NCA * NCB, MPI_DOUBLE, dest, type, MPI_COMM_WORLD);
+			MPI_Send(&a[offset][0], rows*NCA, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
+			MPI_Send(&b, NCA * NCB, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
 			offset = offset + rows;
 		}
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 			source = i;
 			MPI_Recv(&offset, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
 			MPI_Recv(&rows, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
-			MPI_Recv(&c[offset][0], rows*NCB; MPI_DOUBLE, source, mtype, MPI_COMM_WORLD, &status);
+			MPI_Recv(&c[offset][0], rows*NCB, MPI_DOUBLE, source, mtype, MPI_COMM_WORLD, &status);
 			printf("Received results from task %d\n", source);
 
 		}
@@ -83,10 +83,34 @@ int main(int argc, char *argv[]) {
 		for (i = 0; i < NRA; i++) {
 			printf("\n");
 			for (j = 0; j < NCB; j++) {
-				printf("%6.2f\t", c[i][j]);
+				printf("%6.2f  ", c[i][j]);
 			}
 		}
 		printf("\n************************************\n");
 		printf("Done.\n");
 	}
+
+
+	/*********************** worker task ************************/
+	if (taskid > MASTER) {
+		mtype = FROM_MASTER;
+		MPI_Recv(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
+		MPI_Recv(&rows, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
+		MPI_Recv(&a, rows * NCA, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
+		MPI_Recv(&b, NCA * NCB, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
+
+		for (k = 0; k < NCB; k++)
+			for (i = 0; i < rows; i++) {
+				c[i][k] = 0.0;
+				for (j = 0; j < NCA; j++) {
+					c[i][k] = c[i][k] + a[i][k] * b[j][k];
+				}
+			}
+		mtype = FROM_WORKER;
+		MPI_Send(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
+		MPI_Send(&rows, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
+		MPI_Send(&c, rows*NCB, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD);
+	}
+
+	MPI_Finalize();
 }
